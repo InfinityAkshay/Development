@@ -1,0 +1,13 @@
+<img src="{{book.picture}}/"><br>
+Title: {{books.title}}<br>
+Author: {{books.author}}<br>
+Publisher: {{books.publisher}}<br>
+Genre: {{books.genre}}<br>
+Summary: {{books.summary}}<br>
+ISBN: {{books.ISBN}}<br>
+Location: {{books.location}}<br>
+{% if books.availability == '1'%}
+    {{books.availability}} copy available<br>
+{%else%}
+    {{books.availability}} copies available<br>
+{%endif%}
