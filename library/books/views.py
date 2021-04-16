@@ -1,6 +1,7 @@
 from  django.views import generic
 from .models import Book
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.urls import reverse_lazy
 
 
 class IndexView(generic.ListView):
@@ -17,4 +18,14 @@ class DetailView(generic.DetailView):
 
 class BookCreate(CreateView):
     model=Book
-    fields=["title","author","publisher","genre","summary","ISBN","location","availability","picture"]
+    fields="__all__"
+
+class BookUpdate(UpdateView):
+    model=Book
+    fields="__all__"
+
+class BookDelete(DeleteView):
+    model = Book
+    success_url = reverse_lazy("books:index")
+
+
