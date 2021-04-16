@@ -11,7 +11,7 @@ class Book(models.Model):
     ISBN=models.CharField(max_length=13)
     location=models.CharField(max_length=100)
     availability=models.CharField(max_length=100)
-    picture=models.CharField(max_length=100)
+    picture=models.FileField()
 
     def get_absolute_url(self):
         return reverse("books:detail", kwargs={"pk": self.pk})
@@ -19,4 +19,3 @@ class Book(models.Model):
 
     def __str__(self):
         return self.title+"-"+self.author
-

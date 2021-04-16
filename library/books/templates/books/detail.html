@@ -3,7 +3,7 @@
 {% block title %}Borrow Book{% endblock%}
 {% block body %}
     <div class="container">
-    <img src={{books.picture}}+"/"><br>
+    <img src="{{ books.picture.url }}"><br>
     <h4>
         Title:     {{books.title}}<br>
         Author:    {{books.author}}<br>
@@ -15,7 +15,7 @@
         {% if books.availability == '0'%}
             Not available<br>
         {%else%}
-            Available<br>
+            <button>Borrow</button>
         {%endif%}
     </h4>
     </div>
