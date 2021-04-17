@@ -12,10 +12,23 @@
         Summary:   {{books.summary}}<br>
         ISBN:      {{books.ISBN}}<br>
         Location:  {{books.location}}<br>
-        {% if books.availability == '0'%}
-            Not available<br>
+        {% if user.is_librarian %}
+            <button>
+                <a href="{% url 'books:book-update' books.pk %}">
+                    Edit
+                </a>
+            </button><br>
+            <button>
+                <a href="{% url 'books:delete_book' books.id %}">
+                    Delete
+                </a>
+            </button>
         {%else%}
-            <button>Borrow</button>
+            {% if books.availability == '0'%}
+                Not available<br>
+            {%else%}
+                <button>Borrow</button>
+            {%endif%}
         {%endif%}
     </h4>
     </div>

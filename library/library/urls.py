@@ -17,14 +17,13 @@ from django.contrib import admin
 from django.urls import path,include
 from django.conf import settings
 from django.conf.urls.static import static
-#from django.http import HttpResponse
+from django.shortcuts import redirect
 
 
-#def index(request):
-    #return HttpResponse("<h1>Hi</h1>")
-
+def index(request):
+    return redirect("/books")
 urlpatterns = [
-    #path("",index),
+    path("",index),
     path('admin/', admin.site.urls),
     path("books/",include("books.urls"))
 ]

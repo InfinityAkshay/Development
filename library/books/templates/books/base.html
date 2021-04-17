@@ -24,6 +24,13 @@
             </div>
             <div class="collapse navbar-collapse" id="topNavBar">
                 <ul class="nav navbar-nav navbar-right">
+                    {% if user.is_librarian %}
+                        <li>
+                            <a href="{% url 'books:create_book' %}">
+                                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp; Add Book
+                            </a>
+                        </li>
+                    {%endif%}
                     <li class="">
                         <a href="{% url 'books:logout_user' %}">
                             <span class="glyphicon glyphicon-off"></span>&nbsp; Logout
