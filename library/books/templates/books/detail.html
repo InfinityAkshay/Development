@@ -17,7 +17,7 @@
                 <a href="{% url 'books:book-update' books.pk %}">
                     Edit
                 </a>
-            </button><br>
+            </button>
             <button>
                 <a href="{% url 'books:delete_book' books.id %}">
                     Delete
@@ -27,7 +27,25 @@
             {% if books.availability == '0'%}
                 Not available<br>
             {%else%}
-                <button>Borrow</button>
+                {% if connection %}
+                    {% if  connection.state == "1" %}
+                        <button>
+                            <a href="{% url 'books:return_book' books.id %}">
+                                Return
+                            </a>
+                        </button>
+                    {% else %}
+                        <h3>Requested</h3>
+                    {% endif %}
+                {% else %}
+                <form action="{% url 'books:request_book' books.id %}" method="post">
+                    {% csrf_token %}
+                    <label for="return_date">Return Date:</label>
+                    <input type="date" id="return_date" name="return_date">
+                    <input type="submit" value="Borrow">
+
+                </form>
+                {% endif %}
             {%endif%}
         {%endif%}
     </h4>

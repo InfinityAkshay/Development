@@ -1,4 +1,4 @@
-from .models import User, Book
+from .models import User, Book, Request
 from  django import  forms
 
 class UserForm(forms.ModelForm):
@@ -12,3 +12,11 @@ class BookForm(forms.ModelForm):
     class Meta:
         model = Book
         fields = ['title', 'author', 'publisher', 'genre', 'summary', 'ISBN', 'availability', 'picture']
+
+class RequestForm(forms.ModelForm):
+
+    class  Meta:
+        model = Request
+        fields = ["return_date"]
+
+

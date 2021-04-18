@@ -1,6 +1,7 @@
 from django.db import models
 from django.urls import reverse
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+import datetime as dt
 
 
 # Create your models here.
@@ -12,7 +13,7 @@ class Book(models.Model):
     summary=models.CharField(max_length=2000)
     ISBN=models.CharField(max_length=13)
     location=models.CharField(max_length=100)
-    availability=models.CharField(max_length=100)
+    availability=models.IntegerField()
     picture=models.FileField()
 
     def get_absolute_url(self):
@@ -75,6 +76,23 @@ class User(AbstractBaseUser):
     
     def has_module_perms(self, app_label):
         return True
+
+class Request(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    state = models.CharField(max_length=1, choices=(("1", "Accepted"), ("3", "Pending")))
+    return_date = models.DateField()
+    def __str__(self):
+        return self.user.username + " : " + self.book.title + " : " + self.return_date.strftime("%A, %B %d, %Y")
+
+class Renew(models.Model):
+    request = models.ForeignKey(Request, on_delete=models.CASCADE)
+    change_date = models.DateField()
+    def __str__(self):
+        return str(self.request) + " to " + self.change_date.strftime("%A, %B %d, %Y")
+    
+
+
 
 
     

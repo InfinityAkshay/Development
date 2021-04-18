@@ -1,0 +1,71 @@
+{% extends 'books/base.html' %}
+{% block title %}Home{% endblock %}
+{% block body %}
+<div class="container-fluid">
+
+    <div class="row">
+        <div class="col-sm-12">
+            <h1>My Books: </h1>
+            <br><br>
+        </div>
+        {% if borrowed %}
+            {% for book in borrowed %}
+                <div class="col-sm-4 col-lg-2">
+                    <div class="thumbnail">
+                        <a href="{% url 'books:detail' book.book.id %}">
+                            <img src="{{ book.book.picture.url }}" class="img-responsive">
+                        </a>
+                        <div class="caption">
+                            <h2>{{ book.book.title }}</h2>
+                            <h4>{{ book.book.author }}</h4>
+                            <h4>{{ book.return_date }}</h4>
+
+                            <a href="{% url 'books:detail' book.book.id %}" class="btn btn-primary btn-sm" role="button">View Details</a>
+
+
+                        </div>
+                    </div>
+                </div>
+                {% cycle '' '' '' '' '' '<div class="clearfix visible-lg"></div>' %}
+            {% endfor %}
+        {% else %}
+            <div class="col-sm-12">
+                <h2>No Books Available</h2>
+            </div>
+        {% endif %}
+    </div>
+</div><br>
+<div class="container-fluid">
+
+    <div class="row">
+        <div class="col-sm-12">
+            <h1>Pending: </h1>
+            <br><br>
+        </div>
+        {% if pending %}
+            {% for book in pending %}
+                <div class="col-sm-4 col-lg-2">
+                    <div class="thumbnail">
+                        <a href="{% url 'books:detail' book.id %}">
+                            <img src="{{ book.picture.url }}" class="img-responsive">
+                        </a>
+                        <div class="caption">
+                            <h2>{{ book.title }}</h2>
+                            <h4>{{ book.author }}</h4>
+
+                            <a href="{% url 'books:detail' book.id %}" class="btn btn-primary btn-sm" role="button">View Details</a>
+
+
+                        </div>
+                    </div>
+                </div>
+                {% cycle '' '' '' '' '' '<div class="clearfix visible-lg"></div>' %}
+            {% endfor %}
+        {% else %}
+            <div class="col-sm-12">
+                <h2>No Request Pending</h2>
+            </div>
+        {% endif %}
+    </div>
+</div><br>
+{% endblock%}

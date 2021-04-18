@@ -1,6 +1,6 @@
 from  django.views import generic
 from django.contrib.auth import logout
-from .models import Book
+from .models import Book, Request, Renew
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.contrib.auth import authenticate, login
@@ -8,6 +8,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import View
 from .forms import UserForm, BookForm
 from django.db.models import Q
+from datetime import datetime, timedelta
 
 IMAGE_FILE_TYPES = ['png', 'jpg', 'jpeg']
 
@@ -53,7 +54,7 @@ def create_book(request):
                 }
                 return render(request, 'books/create_book.html', context)
             book.save()
-            return render(request, 'books/detail.html', {'book': book})
+            return redirect("/books")
         context = {
             "form": form,
         }
@@ -65,7 +66,9 @@ def detail(request, id):
     else:
         user = request.user
         books = get_object_or_404(Book, id=id)
-        return render(request, 'books/detail.html', {'books': books, 'user': user})
+        connection = Request.objects.filter(user=request.user, book=books).first()
+        return render(request, 'books/detail.html', {'books': books, 'user': user, "connection": connection})
+        
 
 def logout_user(request):
     logout(request)
@@ -115,8 +118,9 @@ def register(request):
     return render(request, 'books/register.html', context)
 
 def delete_book(request, id):
-    book = Book.objects.get(pk=id)
-    book.delete()
+    if (request.user.is_admin or request.user.is_librarian):
+        book = Book.objects.get(pk=id)
+        book.delete()
     return redirect('/books')
 
 class BookUpdate(UpdateView):
@@ -124,5 +128,89 @@ class BookUpdate(UpdateView):
     fields="__all__"
     template = 'books/create_book.html'
 
+def return_book(request, id):
+    user = request.user
+    books = get_object_or_404(Book, id=id)
+    connection = Request.objects.filter(user=request.user, book=books).first()
+    
+    if(connection and connection.state=="1"):
+        connection.book.availability += 1
+        connection.book.save()
+        connection.delete()
+    return redirect('/books')
+
+def request_book(request, id):
+    user = request.user
+    book = get_object_or_404(Book, id=id)
+    connection = Request()
+    connection.user=user
+    connection.book=book
+    connection.state="3"
+    if 1 or request.POST["return_date"]:
+        connection.return_date=request.POST["return_date"]
+        connection.save()
+        return redirect('/books')
+
+def home(request):
+    if request.user.is_librarian:
+        return redirect("/books")
+    borrowed = Request.objects.filter(user=request.user, state = "1")
+    pending = [x.book for x in Request.objects.filter(user=request.user, state = "3")]
+    return render(request, 'books/home.html', {'borrowed': borrowed, 'pending': pending})
+
+def request_page(request):
+    if not request.user.is_librarian:
+        return redirect('/books/home')
+    else:
+        pending = Request.objects.filter(state = "3")
+        return render(request, 'books/request_page.html', {'pending': pending})
+
+def accept(request, id):
+    if not  request.user.is_librarian:
+        return redirect('/books/home')
+    else:
+        connection = Request.objects.get(pk=id)
+        connection.state="1"
+        connection.book.availability -= 1
+        connection.book.save()
+        connection.save()
+        return redirect('/books/requests')
+
+def reject(request, id):
+    if not  request.user.is_librarian:
+        return redirect('/books/home')
+    else:
+        connection = Request.objects.get(pk=id)
+        connection.delete()
+        return redirect('/books/requests')
+
+# def renew(request, id):
+#     if not  request.user.is_librarian:
+#         return redirect('/books/home')
+#     book=Book.objects.get(pk=id)
+#     user=request.user
+#     connection = Request.objects.get(user=user,book=book)
+#     renew = Renew()
+#     renew.request = connection
+#     renew.change_date = request.POST["renew_date"]
+#     renew.save()
+#     return redirect('/books')
 
 
+# def renew_accept(request, id):
+#     if not request.user.is_librarian:
+#         return redirect('/books/home')
+#     else:
+#         renew = Renew.objects.get(pk=id)
+#         renew.request.return_date = renew.change_date
+#         renew.request.save()
+#         renew.save()
+#         return redirect('/books/requests')
+
+# def renew_reject(request, id):
+#     if not request.user.is_librarian:
+#         return redirect('/books/home')
+#     else:
+#         renew = Renew.objects.get(pk=id)
+#         renew.delete()
+#         return redirect('/books/requests')
