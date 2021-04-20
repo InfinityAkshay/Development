@@ -2,6 +2,7 @@ from django.db import models
 from django.urls import reverse
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 import datetime as dt
+from django.core.validators import MinLengthValidator, MaxValueValidator, MinValueValidator
 
 
 # Create your models here.
@@ -11,10 +12,11 @@ class Book(models.Model):
     publisher=models.CharField(max_length=100)
     genre=models.CharField(max_length=100)
     summary=models.CharField(max_length=2000)
-    ISBN=models.CharField(max_length=13)
+    ISBN=models.CharField(max_length=13, validators=[MinLengthValidator(13)])
     location=models.CharField(max_length=100)
-    availability=models.IntegerField()
+    availability=models.IntegerField(validators=[MinValueValidator(0)])
     picture=models.FileField()
+    
 
     def get_absolute_url(self):
         return reverse("books:detail", kwargs={"id": self.pk})

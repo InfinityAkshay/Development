@@ -24,9 +24,7 @@
                 </a>
             </button>
         {%else%}
-            {% if books.availability == '0'%}
-                Not available<br>
-            {%else%}
+            {% if books.availability == 0 %}
                 {% if connection %}
                     {% if  connection.state == "1" %}
                         <button>
@@ -34,12 +32,42 @@
                                 Return
                             </a>
                         </button>
+                        <form action="{% url 'books:renew' books.id %}" method="post">
+                            {% csrf_token %}
+                            <label for="renew_date">Renew Return Date:</label>
+                            <input type="date" id="renew_date" name="renew_date">
+                            <input type="submit" value="Renew">
+        
+                        </form>
+                    {% else %}
+                        <h3>Requested</h3>
+                    {% endif %}
+                {% else %}
+                    Not available<br>
+                {%endif%}
+            {%else%}
+                {% if connection %}
+                    {% if  connection.state == "1" %}
+                        <button>
+                            <a href="{% url 'books:return_book' books.id %}">
+                                Return
+                            </a>
+                        </button><br>
+                        <form action="{% url 'books:renew' books.id %}" method="post">
+                            {% csrf_token %}
+                            {% if error %} {{error}}<br> {% endif %}
+                            <label for="renew_date">Renew Return Date:</label>
+                            <input type="date" id="renew_date" name="renew_date">
+                            <input type="submit" value="Renew">
+        
+                        </form>
                     {% else %}
                         <h3>Requested</h3>
                     {% endif %}
                 {% else %}
                 <form action="{% url 'books:request_book' books.id %}" method="post">
                     {% csrf_token %}
+                    {% if error %} {{error}}<br> {% endif %}
                     <label for="return_date">Return Date:</label>
                     <input type="date" id="return_date" name="return_date">
                     <input type="submit" value="Borrow">

@@ -2,10 +2,12 @@
 
 {% block body %}
 <div class="container-fluid">
+<h2>{{user.username}}: Librarian</h2>
+<h3>{{user.email}}</h3>
+<hr>
     <div class="row">
         <div class="col-sm-12">
             <h1>Requests: </h1>
-            <br><br>
         </div>
         {% if pending %}
             {% for request in pending %}
@@ -26,7 +28,34 @@
             {% endfor %}
         {% else %}
             <div class="col-sm-12">
-                <h2>No Requests</h2>
+                <h3>No Requests</h3>
+            </div>
+        {% endif %}
+    </div><br>
+    <div class="row">
+        <div class="col-sm-12">
+            <h1>Renew Requests: </h1>
+        </div>
+        {% if renew %}
+            {% for request in renew %}
+                <div class="col-sm-4 col-lg-2">
+                    {{request}}<br>
+                    <button>
+                        <a href="{% url 'books:renew_accept' request.id %}">
+                            Accept
+                        </a>
+                    </button>
+                    <button>
+                        <a href="{% url 'books:renew_reject' request.id %}">
+                            Reject
+                        </a>
+                    </button>
+                </div>
+                {% cycle '' '' '' '' '' '<div class="clearfix visible-lg"></div>' %}
+            {% endfor %}
+        {% else %}
+            <div class="col-sm-12">
+                <h3>No Requests</h3>
             </div>
         {% endif %}
     </div>

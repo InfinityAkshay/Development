@@ -22,7 +22,7 @@ urlpatterns = [
     url(r'^requests/$', views.request_page, name='request'),
     url(r'^requests/(?P<id>[0-9]+)/accept/$', views.accept, name='accept'),
     url(r'^requests/(?P<id>[0-9]+)/reject/$', views.reject, name='reject'),
-    # url(r'^(?P<id>[0-9]+)/renew/$', views.renew, name='renew'),
-    # url(r'^renew/(?P<id>[0-9]+)/accept/$', views.accept, name='renew_accept'),
-    # url(r'^renew/(?P<id>[0-9]+)/reject/$', views.reject, name='renew_reject'),
+    url(r'^(?P<id>[0-9]+)/renew/$', views.renew, name='renew'),
+    url(r'^renew/(?P<id>[0-9]+)/accept/$', views.renew_accept, name='renew_accept'),
+    url(r'^renew/(?P<id>[0-9]+)/reject/$', views.renew_reject, name='renew_reject'),
 ]
