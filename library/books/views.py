@@ -1,6 +1,6 @@
 from  django.views import generic
 from django.contrib.auth import logout
-from .models import Book, Request, Renew
+from .models import Book, Request, Renew, Rating, Comment
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.contrib.auth import authenticate, login
@@ -66,8 +66,22 @@ def detail(request, id, error=None):
     else:
         user = request.user
         books = get_object_or_404(Book, id=id)
+        rating = Rating.objects.filter(book=books)
+        if rating:
+            avg = str(sum([x.rating for x in rating])/len(rating))
+        else:
+            avg = "No ratings yet"
+        rating = Rating.objects.filter(book=books, user=request.user).first()
+        if rating:
+            rating = [str(x) for x in range(1, Rating.objects.filter(book=books, user=request.user).first().rating+1)]
+            r = [str(x) for x in range(int(rating[-1])+1, 6)]
+        else:
+            rating=[]
+            r = [str(x) for x in "12345"]
         connection = Request.objects.filter(user=request.user, book=books).first()
-        return render(request, 'books/detail.html', {'books': books, 'user': user, "connection": connection, "error": error})
+        comment = [x for x in Comment.objects.filter(book=books)][::-1]
+        #comment=0
+        return render(request, 'books/detail.html', {'books': books, 'user': user, "connection": connection, "error": error, "avg": avg, "rating": rating, "r":r, "comment": comment})
         
 
 def logout_user(request):
@@ -142,9 +156,11 @@ def return_book(request, id):
 def request_book(request, id):
     user = request.user
     book = get_object_or_404(Book, id=id)
-    connection = Request()
-    connection.user=user
-    connection.book=book
+    connection = Request.objects.filter(book=book, user=user).first()
+    if not connection:
+        connection=Request()
+        connection.user=user
+        connection.book=book
     connection.state="3"
     if request.POST["return_date"]:
         connection.return_date=request.POST["return_date"]
@@ -158,7 +174,8 @@ def home(request):
         return redirect("/books")
     borrowed = Request.objects.filter(user=request.user, state = "1")
     pending = Request.objects.filter(user=request.user, state = "3")
-    return render(request, 'books/home.html', {'borrowed': borrowed, 'pending': pending, "user": request.user})
+    rejected = Request.objects.filter(user=request.user, state = "2")
+    return render(request, 'books/home.html', {'borrowed': borrowed, 'pending': pending, "rejected": rejected, "user": request.user})
 
 def request_page(request):
     if not request.user.is_librarian:
@@ -189,7 +206,8 @@ def reject(request, id):
         return redirect('/books/home')
     else:
         connection = Request.objects.get(pk=id)
-        connection.delete()
+        connection.state="2"
+        connection.save()
         return redirect('/books/requests')
 
 def renew(request, id):
@@ -225,3 +243,25 @@ def renew_reject(request, id):
         renew = Renew.objects.get(pk=id)
         renew.delete()
         return redirect('/books/requests')
+
+def rate(request, id):
+    if "rate" in request.POST:
+        book = Book.objects.get(pk=id)
+        rating=Rating.objects.filter(user=request.user, book=book).first()
+        if not rating:
+            rating = Rating()
+        rating.user = request.user
+        rating.book = book
+        rating.rating = int(request.POST["rate"][0])
+        rating.save()
+    return redirect("/books/"+str(id))
+
+def comment(request, id):
+    if "comment" in request.POST:
+        comment=Comment()
+        comment.book = Book.objects.get(pk=id)
+        comment.user = request.user
+        comment.comment = request.POST["comment"]
+        comment.save()
+    return redirect("/books/"+str(id))
+

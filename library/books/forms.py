@@ -11,7 +11,7 @@ class BookForm(forms.ModelForm):
     
     class Meta:
         model = Book
-        fields = ['title', 'author', 'publisher', 'genre', 'summary', 'ISBN', 'availability', 'picture']
+        fields = ['title', 'author', 'publisher', 'genre', 'summary', 'ISBN', 'availability', "location", 'picture']
 
 class RequestForm(forms.ModelForm):
 

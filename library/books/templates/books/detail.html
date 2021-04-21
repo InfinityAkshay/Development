@@ -1,17 +1,16 @@
 {% extends 'books/base.html' %}
-
 {% block title %}Borrow Book{% endblock%}
 {% block body %}
     <div class="container">
     <img src="{{ books.picture.url }}"><br>
     <h4>
-        Title:     {{books.title}}<br>
-        Author:    {{books.author}}<br>
-        Publisher: {{books.publisher}}<br>
-        Genre:     {{books.genre}}<br>
-        Summary:   {{books.summary}}<br>
-        ISBN:      {{books.ISBN}}<br>
-        Location:  {{books.location}}<br>
+        <b>Title:</b>     {{books.title}}<br>
+        <b>Author:</b>    {{books.author}}<br>
+        <b>Publisher:</b> {{books.publisher}}<br>
+        <b>Genre:</b>     {{books.genre}}<br>
+        <b>Summary:</b>   {{books.summary}}<br>
+        <b>ISBN:</b>      {{books.ISBN}}<br>
+        <b>Location:</b>  {{books.location}}<br>
         {% if user.is_librarian %}
             <button>
                 <a href="{% url 'books:book-update' books.pk %}">
@@ -25,7 +24,7 @@
             </button>
         {%else%}
             {% if books.availability == 0 %}
-                {% if connection %}
+                {% if connection and connection.state != "2" %}
                     {% if  connection.state == "1" %}
                         <button>
                             <a href="{% url 'books:return_book' books.id %}">
@@ -46,8 +45,8 @@
                     Not available<br>
                 {%endif%}
             {%else%}
-                {% if connection %}
-                    {% if  connection.state == "1" %}
+                {% if connection and connection.state != "2" %}
+                    {% if  connection.state == "1"%}
                         <button>
                             <a href="{% url 'books:return_book' books.id %}">
                                 Return
@@ -59,7 +58,6 @@
                             <label for="renew_date">Renew Return Date:</label>
                             <input type="date" id="renew_date" name="renew_date">
                             <input type="submit" value="Renew">
-        
                         </form>
                     {% else %}
                         <h3>Requested</h3>
@@ -71,10 +69,32 @@
                     <label for="return_date">Return Date:</label>
                     <input type="date" id="return_date" name="return_date">
                     <input type="submit" value="Borrow">
-
                 </form>
                 {% endif %}
+                
             {%endif%}
+            <form action="{% url 'books:rate' books.id %}" method="post">
+                {% csrf_token %}
+                <label>Rating: </label>
+                {% for i in rating %}
+                    <input type="radio" name="rate" value={{i}} checked="checked"/>
+                {%endfor%}
+                {% for i in r %}
+                    <input type="radio" name="rate" value={{i}}/>
+                {%endfor%}
+                <input type="submit" value="Submit">
+            </form>
+            <b>Average Rating: </b> {{avg}}
+
+            <form action="{% url 'books:comment' books.id %}" method="post">
+                {% csrf_token %}
+                <label for="comment">Comment: </label>
+                <input type="text" id="comment" name="comment">
+                <input type="submit" value="Comment">
+            </form>
+            {% for i in comment %}
+                {{i}}<br>
+            {%endfor%}
         {%endif%}
     </h4>
     </div>

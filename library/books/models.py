@@ -82,7 +82,7 @@ class User(AbstractBaseUser):
 class Request(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
-    state = models.CharField(max_length=1, choices=(("1", "Accepted"), ("3", "Pending")))
+    state = models.CharField(max_length=1, choices=(("1", "Accepted"),("2", "Rejected"), ("3", "Pending")))
     return_date = models.DateField()
     def __str__(self):
         return self.user.username + " : " + self.book.title + " : " + self.return_date.strftime("%A, %B %d, %Y")
@@ -92,6 +92,20 @@ class Renew(models.Model):
     change_date = models.DateField()
     def __str__(self):
         return str(self.request) + " to " + self.change_date.strftime("%A, %B %d, %Y")
+
+class Rating(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    rating = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(5)])
+
+class Comment(models.Model):
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    comment = models.CharField(max_length=300)
+
+    def __str__(self):
+        return self.user.username + ": " + self.comment
+
     
 
 
