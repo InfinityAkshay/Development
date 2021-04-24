@@ -1,8 +1,9 @@
 # Library Web App
 
-This web app is a library management system that allows the fast and simple transferring, returning and management of books.
+This web app is a library management system that allows the fast and simple transferring, returning and management of books. Link for website: http://akshay2001.pythonanywhere.com/.
 <br/>
 # Note
+The hosting site is a little buggy. While the backend works properly, the background is not shown and the admin page's UI is almost non existent. Also, the website will be disabled after Friday 23 July 2021. So, it would be better to run the webapp locally.</br>
 If you are running it locally, you must have django 3.2 installed. Go to the library folder with manage.py and run the command "python manage.py runserver" in the terminal. Then, go to the link given in the terminal or go to localhost:8000.
 <br/>
 
