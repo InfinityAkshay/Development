@@ -42,8 +42,8 @@ If their request is accepted, they can choose to either return the book or renew
 Users can also see their details in their homepage along with their accepted, pending and rejected requests.
 <br/>
 <img src="pics/my_books.PNG">
-<img src="pics/pending_quest.PNG">
-<img src="pics/rejected_request.PNG">
+<img src="pics/pending_request.PNG">
+<img src="pics/rejected_requests.PNG">
 <br/>
 <a name="librarian"/>
 
