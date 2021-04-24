@@ -62,7 +62,7 @@ def create_book(request):
 
 def detail(request, id, error=None):
     if not request.user.is_authenticated:
-        return render(request, 'books/login.html')
+        return redirect('/books/login_user')
     else:
         user = request.user
         books = get_object_or_404(Book, id=id)
@@ -94,6 +94,8 @@ def logout_user(request):
 
 
 def login_user(request):
+    if request.user.is_authenticated:
+        return redirect('/books')
     if request.method == "POST":
         username = request.POST['username']
         password = request.POST['password']
