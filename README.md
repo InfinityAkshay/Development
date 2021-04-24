@@ -24,6 +24,9 @@ On going to the link, it redirects you to a login page, where you can enter your
 <img src="pics/login.PNG">
 <img src="pics/register.PNG"> 
 <br/>
+Admins: admin. passwd=admin<br/>
+Librarians: user1. passwd=pass1<br/>
+Members: useri. passwd=passi(i goes from 2 to 5)<br/>
 <a name="member"/>
 
 ## Member
