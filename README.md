@@ -84,7 +84,7 @@ The admin can make a member a librarian and vise-versa along with editing and de
 <img src="pics/edit_comment.PNG">
 <br/>
 
-Admins also have their own ligin page, in which only admins can login.
+Admins also have their own login page, in which only admins can login.
 <br/>
 <img src="pics/admin_login.PNG">
 
